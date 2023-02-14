@@ -1,5 +1,5 @@
 import app from './app.js';
-import { conectDB } from "../server/db/conn.js";
+import { conectDB } from "./db/conn.js";
 import Razorpay from "razorpay";
 
 conectDB();
