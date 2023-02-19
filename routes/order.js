@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { getAdminOrders, getMyOrders, getOrderDetails, placeOrder, processOrder } from "../controllers/order.js";
+import { getAdminOrders, getMyOrders, getOrderDetails, paymentVerification, placeOrder, placeOrderOnline, processOrder } from "../controllers/order.js";
 import { myProfile, logout } from "../controllers/user.js";
 import { authorizeAdmin, isAuthenticated } from "../middleware/auth.js";
 
@@ -8,9 +8,9 @@ const router = express.Router();
 
 router.post("/createorder", isAuthenticated, placeOrder);
 
-// router.post("/createorderonline", isAuthenticated, placeOrderOnline);
+router.post("/createorderonline", isAuthenticated, placeOrderOnline);
 
-// router.post("/paymentverification", isAuthenticated, paymentVerification);
+router.post("/paymentverification", isAuthenticated, paymentVerification);
 
 router.get("/myorders", isAuthenticated, getMyOrders);
 

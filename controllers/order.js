@@ -2,7 +2,7 @@ import { asyncError } from "../middleware/errorMiddleware.js";
 import { Order } from "../modals/Order.js";
 import { Payment } from "../modals/Payment.js";
 import ErroHandler from "../utils/ErrorHandling.js";
-// import { instance } from "../server.js";
+import { instance } from "../server.js";
 import crypto from "crypto";
 
 export const placeOrder = asyncError(async (req, res, next) => {
@@ -24,51 +24,51 @@ export const placeOrder = asyncError(async (req, res, next) => {
     });
 });
 
-// export const placeOrderOnline = asyncError(async (req, res, next) => {
-//     const {
-//         shippingInfo, orderItems, user, paymentMethod, paymentInfo, paidAt, itemsPrice, shippingCharges, taxCharges, totalAmount, orderStatus, deliveredAt
-//     } = req.body;
+export const placeOrderOnline = asyncError(async (req, res, next) => {
+    const {
+        shippingInfo, orderItems, user, paymentMethod, paymentInfo, paidAt, itemsPrice, shippingCharges, taxCharges, totalAmount, orderStatus, deliveredAt
+    } = req.body;
 
-//     const orderOptions = {
-//         shippingInfo, orderItems, user, paymentMethod, paymentInfo, paidAt, itemsPrice, shippingCharges, taxCharges, totalAmount, orderStatus, deliveredAt,
-//     };
+    const orderOptions = {
+        shippingInfo, orderItems, user, paymentMethod, paymentInfo, paidAt, itemsPrice, shippingCharges, taxCharges, totalAmount, orderStatus, deliveredAt,
+    };
 
-//     const options = {
-//         amount: Number(totalAmount * 100),  // amount in the smallest currency unit
-//         currency: "INR",
-//         receipt: "order_rcptid_11"
-//     };
+    const options = {
+        amount: Number(totalAmount * 100),  // amount in the smallest currency unit
+        currency: "INR",
+        receipt: "order_rcptid_11"
+    };
 
-//     const order = await instance.orders.create(options);
+    const order = await instance.orders.create(options);
 
-//     res.status(201).json({
-//         success: true,
-//         options,
-//         orderOptions,
-//     });
-// });
+    res.status(201).json({
+        success: true,
+        options,
+        orderOptions,
+    });
+});
 
-// export const paymentVerification = asyncError(async (req, res, next) => {
-//     const { razorpay_payment_id, razorpay_order_id,
-//         razorpay_signature,
-//         orderOptions } = req.body;
+export const paymentVerification = asyncError(async (req, res, next) => {
+    const { razorpay_payment_id, razorpay_order_id,
+        razorpay_signature,
+        orderOptions } = req.body;
 
-//     const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-//     const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_API_SECRET).update(body.toString())
-//         .digest('hex');
+    const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_API_SECRET).update(body.toString())
+        .digest('hex');
 
-//     const isAuthentic = razorpay_signature === expectedSignature;
+    const isAuthentic = razorpay_signature === expectedSignature;
 
-//     if (!isAuthentic) {
-//         return next(new ErroHandler("Paymnt Failed", 400));
-//     }
-//     const payment = await Payment.create({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
+    if (!isAuthentic) {
+        return next(new ErroHandler("Paymnt Failed", 400));
+    }
+    const payment = await Payment.create({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
 
-//     await Order.create({
-//         ...orderOptions, paidAt: new Date(Date.now()), paymentInfo: payment._id,
-//     });
-// });
+    await Order.create({
+        ...orderOptions, paidAt: new Date(Date.now()), paymentInfo: payment._id,
+    });
+});
 
 export const getMyOrders = (asyncError(async (req, res, next) => {
     const orders = await Order.find({
